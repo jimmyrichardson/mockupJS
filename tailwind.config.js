@@ -2,7 +2,11 @@
 export default {
   content: ["./src/**/*.{html,js,vue,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'switzer': ['switzer', 'sans-serif']
+      }
+    }
   },
   plugins: [],
 }
