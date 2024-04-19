@@ -43,7 +43,7 @@ async function handleRecording() {
     // You can now use the url for your purposes, for example:
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'screen-recording.webm';
+    a.download = 'screen-recording.mp4';
     a.click();
   };
 
