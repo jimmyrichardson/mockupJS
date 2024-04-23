@@ -3,10 +3,12 @@ import { ref } from 'vue';
 import { useBgColorStore } from '@/stores/bgcolor';
 
 const bgStore = useBgColorStore();
+let stream;
 
 var formData = ref({
   url: '',
   submitted: false,
+  time: 1,
 });
 
 function handleSubmit() {
@@ -25,9 +27,18 @@ function updateBg( color ){
   bgStore.color = color;
 }
 
-async function handleRecording() {
-  const stream = await navigator.mediaDevices.getDisplayMedia({
-    video: { cursor: "always" },
+function handleRecording() {
+  handleStream();
+  openWindow();
+}
+
+function openWindow() {
+  window.open(`/media?url=${encodeURIComponent(formData.value.url)}&bg=${encodeURIComponent(bgStore.color)}`, '_blank');
+}
+
+async function handleStream() {
+  stream = await navigator.mediaDevices.getDisplayMedia({
+    video: { cursor: "never" },
     audio: false
   });
   const mediaRecorder = new MediaRecorder(stream);
@@ -43,14 +54,19 @@ async function handleRecording() {
     // You can now use the url for your purposes, for example:
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'screen-recording.mp4';
+    a.download = 'screen-recording.webm';
     a.click();
   };
 
   // Stop recording after 5 seconds
   setTimeout(() => {
     mediaRecorder.stop();
-  }, 5000);
+    stopSharing();
+  }, formData.value.time * 1000 );
+}
+
+function stopSharing() {
+  stream.getTracks().forEach(track => track.stop());
 }
 
 </script>
@@ -73,7 +89,15 @@ async function handleRecording() {
         <button aria-label="Desktop" class="font-switzer">Desktop</button>
       </div>
       <div>
+        <h2 class="font-switzer">Time (seconds):</h2>
+        <input
+          type="number"
+          class="bg-transparent border-white border-b-2 p-4 font-switzer"
+          v-model="formData.time" />
+      </div>
+      <div>
         <h2 class="font-switzer">Background color:</h2>
+        <div class="flex gap-1 m-4">
         <button aria-label="Black" class="bg-black w-10 h-10 border-white border-2 cursor-pointer" @click="updateBg('#000')"></button>
         <button aria-label="White" class="bg-white w-10 h-10 border-white border-2 cursor-pointer" @click="updateBg('#fff')"></button>
         <input
@@ -92,10 +116,12 @@ async function handleRecording() {
           </svg>
         </button>
         <button @click="handleRecording">RECORD</button>
+        </div>
       </div>
       <iframe
         :src="formData.url"
-        class="m-auto w-full h-screen"></iframe>
+        class="m-auto w-full h-screen">
+      </iframe>
     </div>
   </main>
 </template>

@@ -558,6 +558,10 @@ video {
   margin: auto;
 }
 
+.m-4 {
+  margin: 1rem;
+}
+
 .flex {
   display: flex;
 }
@@ -592,6 +596,10 @@ video {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.gap-1 {
+  gap: 0.25rem;
 }
 
 .border-2 {
